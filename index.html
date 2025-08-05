@@ -30,6 +30,13 @@
       background-color: #e3f2fd;
       border-radius: 6px;
       font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .selected {
+      background-color: #81c784 !important;
+      color: white;
     }
 
     button {
@@ -40,19 +47,27 @@
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin-bottom: 10px;
     }
 
     button:hover {
       background-color: #1565c0;
+    }
+
+    #message {
+      font-size: 20px;
+      font-weight: bold;
+      color: green;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
 
   <h1>Element Symbol Bingo</h1>
- 
-
+  <button onclick="generateBingo()">🎲 สุ่มบิงโกใหม่</button>
   <div id="bingo"></div>
+  <div id="message"></div>
 
   <script>
     const elements = [
@@ -61,6 +76,8 @@
       "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
       "Ga", "Ge", "As", "Se", "Br", "Kr"
     ];
+
+    let selectedCells = Array(5).fill(null).map(() => Array(5).fill(false));
 
     function shuffleArray(arr) {
       return arr.map(value => [Math.random(), value])
@@ -71,18 +88,61 @@
     function generateBingo() {
       const container = document.getElementById("bingo");
       container.innerHTML = "";
+      document.getElementById("message").textContent = "";
 
-      const shuffled = shuffleArray(elements).slice(0, 25); // ใช้ 25 ธาตุพอดี
+      const shuffled = shuffleArray(elements).slice(0, 25);
+      selectedCells = Array(5).fill(null).map(() => Array(5).fill(false));
 
-      shuffled.forEach(symbol => {
+      shuffled.forEach((symbol, i) => {
+        const row = Math.floor(i / 5);
+        const col = i % 5;
+
         const cell = document.createElement("div");
         cell.classList.add("cell");
         cell.textContent = symbol;
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+
+        cell.addEventListener("click", () => {
+          cell.classList.toggle("selected");
+          selectedCells[row][col] = !selectedCells[row][col];
+          if (checkBingo()) {
+            document.getElementById("message").textContent = "🎉 BINGO!";
+          }
+        });
+
         container.appendChild(cell);
       });
     }
 
-    // โหลดครั้งแรก
+    function checkBingo() {
+      // ตรวจ row
+      for (let i = 0; i < 5; i++) {
+        if (selectedCells[i].every(v => v)) return true;
+      }
+
+      // ตรวจ column
+      for (let j = 0; j < 5; j++) {
+        let colFull = true;
+        for (let i = 0; i < 5; i++) {
+          if (!selectedCells[i][j]) {
+            colFull = false;
+            break;
+          }
+        }
+        if (colFull) return true;
+      }
+
+      // ตรวจทแยงซ้ายบน-ขวาล่าง
+      if ([0,1,2,3,4].every(i => selectedCells[i][i])) return true;
+
+      // ตรวจทแยงขวาบน-ซ้ายล่าง
+      if ([0,1,2,3,4].every(i => selectedCells[i][4 - i])) return true;
+
+      return false;
+    }
+
+    // โหลดเริ่มต้น
     generateBingo();
   </script>
 
