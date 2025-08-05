@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Element Bingo</title>
   <style>
     body {
@@ -10,11 +10,9 @@
       text-align: center;
       padding: 20px;
     }
-
     h1 {
       margin-bottom: 10px;
     }
-
     #bingo {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -22,7 +20,6 @@
       max-width: 500px;
       margin: 0 auto 20px;
     }
-
     .cell {
       border: 1px solid #444;
       padding: 20px;
@@ -32,13 +29,12 @@
       font-weight: bold;
       cursor: pointer;
       user-select: none;
+      transition: background-color 0.3s;
     }
-
     .selected {
       background-color: #81c784 !important;
       color: white;
     }
-
     button {
       padding: 10px 20px;
       font-size: 16px;
@@ -49,102 +45,110 @@
       cursor: pointer;
       margin-bottom: 10px;
     }
-
     button:hover {
       background-color: #1565c0;
     }
-
     #message {
       font-size: 20px;
       font-weight: bold;
       color: green;
       margin-top: 10px;
+      min-height: 28px;
     }
   </style>
 </head>
 <body>
 
   <h1>Element Symbol Bingo</h1>
-  <button onclick="generateBingo()">🎲 สุ่มบิงโกใหม่</button>
+  <button id="newGameBtn">🎲 สุ่มบิงโกใหม่</button>
   <div id="bingo"></div>
   <div id="message"></div>
 
-  <script>
-    const elements = [
-      "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
-      "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
-      "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-      "Ga", "Ge", "As", "Se", "Br", "Kr"
-    ];
+<script>
+  const elements = [
+    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+    "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
+    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
+    "Ga", "Ge", "As", "Se", "Br", "Kr"
+  ];
 
-    let selectedCells = Array(5).fill(null).map(() => Array(5).fill(false));
+  let selectedCells = [];
 
-    function shuffleArray(arr) {
-      return arr.map(value => [Math.random(), value])
-                .sort((a, b) => a[0] - b[0])
-                .map(item => item[1]);
-    }
+  function shuffleArray(arr) {
+    return arr
+      .map(value => [Math.random(), value])
+      .sort((a, b) => a[0] - b[0])
+      .map(item => item[1]);
+  }
 
-    function generateBingo() {
-      const container = document.getElementById("bingo");
-      container.innerHTML = "";
-      document.getElementById("message").textContent = "";
+  function generateBingo() {
+    const container = document.getElementById("bingo");
+    container.innerHTML = "";
+    document.getElementById("message").textContent = "";
+    
+    const shuffled = shuffleArray(elements).slice(0, 25);
+    selectedCells = Array(5).fill(null).map(() => Array(5).fill(false));
 
-      const shuffled = shuffleArray(elements).slice(0, 25);
-      selectedCells = Array(5).fill(null).map(() => Array(5).fill(false));
+    shuffled.forEach((symbol, i) => {
+      const row = Math.floor(i / 5);
+      const col = i % 5;
 
-      shuffled.forEach((symbol, i) => {
-        const row = Math.floor(i / 5);
-        const col = i % 5;
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.textContent = symbol;
+      cell.dataset.row = row;
+      cell.dataset.col = col;
 
-        const cell = document.createElement("div");
-        cell.classList.add("cell");
-        cell.textContent = symbol;
-        cell.dataset.row = row;
-        cell.dataset.col = col;
+      cell.addEventListener("click", () => {
+        // สลับสถานะเลือก
+        selectedCells[row][col] = !selectedCells[row][col];
+        cell.classList.toggle("selected", selectedCells[row][col]);
 
-        cell.addEventListener("click", () => {
-          cell.classList.toggle("selected");
-          selectedCells[row][col] = !selectedCells[row][col];
-          if (checkBingo()) {
-            document.getElementById("message").textContent = "🎉 BINGO!";
-          }
-        });
+        console.log(`Clicked cell [${row},${col}] selected: ${selectedCells[row][col]}`);
 
-        container.appendChild(cell);
-      });
-    }
-
-    function checkBingo() {
-      // ตรวจ row
-      for (let i = 0; i < 5; i++) {
-        if (selectedCells[i].every(v => v)) return true;
-      }
-
-      // ตรวจ column
-      for (let j = 0; j < 5; j++) {
-        let colFull = true;
-        for (let i = 0; i < 5; i++) {
-          if (!selectedCells[i][j]) {
-            colFull = false;
-            break;
-          }
+        if (checkBingo()) {
+          document.getElementById("message").textContent = "🎉 BINGO!";
+        } else {
+          document.getElementById("message").textContent = "";
         }
-        if (colFull) return true;
-      }
+      });
 
-      // ตรวจทแยงซ้ายบน-ขวาล่าง
-      if ([0,1,2,3,4].every(i => selectedCells[i][i])) return true;
+      container.appendChild(cell);
+    });
+  }
 
-      // ตรวจทแยงขวาบน-ซ้ายล่าง
-      if ([0,1,2,3,4].every(i => selectedCells[i][4 - i])) return true;
-
-      return false;
+  function checkBingo() {
+    // ตรวจ row
+    for (let i = 0; i < 5; i++) {
+      if (selectedCells[i].every(v => v)) return true;
     }
 
-    // โหลดเริ่มต้น
-    generateBingo();
-  </script>
+    // ตรวจ column
+    for (let j = 0; j < 5; j++) {
+      let colFull = true;
+      for (let i = 0; i < 5; i++) {
+        if (!selectedCells[i][j]) {
+          colFull = false;
+          break;
+        }
+      }
+      if (colFull) return true;
+    }
+
+    // ตรวจทแยงซ้ายบน-ขวาล่าง
+    if ([0,1,2,3,4].every(i => selectedCells[i][i])) return true;
+
+    // ตรวจทแยงขวาบน-ซ้ายล่าง
+    if ([0,1,2,3,4].every(i => selectedCells[i][4 - i])) return true;
+
+    return false;
+  }
+
+  document.getElementById("newGameBtn").addEventListener("click", generateBingo);
+
+  // เริ่มเกมครั้งแรก
+  generateBingo();
+</script>
 
 </body>
 </html>
