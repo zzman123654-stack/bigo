@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เกมบิงโกธาตุ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f9ff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #0077cc;
+    }
+
+    .bingo-board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+
+    .cell {
+      background: white;
+      border: 2px solid #0077cc;
+      padding: 20px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: default;
+    }
+
+    .marked {
+      background-color: #28a745;
+      color: white;
+      font-weight: bold;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #called-element {
+      font-size: 20px;
+      margin-top: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎯 เกมบิงโกธาตุ</h1>
+
+  <div class="bingo-board" id="board"></div>
+
+  <button onclick="callElement()">สุ่มธาตุ</button>
+  <div id="called-element"></div>
+
+  <script>
+     { symbol: "H", name: "Hydrogen" },
+      { symbol: "He", name: "Helium" },
+      { symbol: "Li", name: "Lithium" },
+      { symbol: "Be", name: "Beryllium" },
+      { symbol: "B", name: "Boron" },
+      { symbol: "C", name: "Carbon" },
+      { symbol: "N", name: "Nitrogen" },
+      { symbol: "O", name: "Oxygen" },
+      { symbol: "F", name: "Fluorine" },
+      { symbol: "Ne", name: "Neon" },
+      { symbol: "Na", name: "Sodium" },
+      { symbol: "Mg", name: "Magnesium" },
+      { symbol: "Al", name: "Aluminum" },
+      { symbol: "Si", name: "Silicon" },
+      { symbol: "P", name: "Phosphorus" },
+      { symbol: "S", name: "Sulfur" },
+      { symbol: "Cl", name: "Chlorine" },
+      { symbol: "Ar", name: "Argon" },
+      { symbol: "K", name: "Potassium" },
+      { symbol: "Ca", name: "Calcium" },
+      { symbol: "Rb", name: "Rubidium" },
+      { symbol: "Sr", name: "Strontium" },
+      { symbol: "Cs", name: "Cesium" },
+      { symbol: "Ba", name: "Barium" },
+      { symbol: "Fr", name: "Francium" },
+      { symbol: "Ra", name: "Radium" },
+      { symbol: "Ga", name: "Gallium" },
+      { symbol: "Ge", name: "Germanium" },
+      { symbol: "As", name: "Arsenic" },
+      { symbol: "Se", name: "Selenium" },
+      { symbol: "Br", name: "Bromine" },
+      { symbol: "In", name: "Indium" },
+      { symbol: "Sn", name: "Tin" },
+      { symbol: "Sb", name: "Antimony" },
+      { symbol: "Te", name: "Tellurium" },
+      { symbol: "I", name: "Iodine" },
+      { symbol: "Tl", name: "Thallium" },
+      { symbol: "Pb", name: "Lead" },
+      { symbol: "Bi", name: "Bismuth" },
+      { symbol: "Po", name: "Polonium" },
+      { symbol: "At", name: "Astatine" },
+      { symbol: "Kr", name: "Krypton" },
+      { symbol: "Xe", name: "Xenon" },
+      { symbol: "Rn", name: "Radon" }
+    let boardElements = [];
+    let called = [];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function createBoard() {
+      shuffle(elements);
+      boardElements = elements.slice(0, 25);
+      const board = document.getElementById("board");
+      board.innerHTML = "";
+      boardElements.forEach(el => {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.setAttribute("data-symbol", el.symbol);
+        cell.textContent = el.symbol;
+        board.appendChild(cell);
+      });
+    }
+
+    function callElement() {
+      const remaining = elements.filter(e => !called.includes(e.symbol));
+      if (remaining.length === 0) {
+        document.getElementById("called-element").textContent = "✅ เรียกครบทุกธาตุแล้ว!";
+        return;
+      }
+
+      const random = remaining[Math.floor(Math.random() * remaining.length)];
+      called.push(random.symbol);
+      document.getElementById("called-element").textContent = `📢 เรียก: ${random.symbol} (${random.name})`;
+
+      const cells = document.querySelectorAll(".cell");
+      cells.forEach(cell => {
+        if (cell.getAttribute("data-symbol") === random.symbol) {
+          cell.classList.add("marked");
+        }
+      });
+    }
+
+    // เริ่มเกม
+    createBoard();
+  </script>
+
+</body>
+</html>
