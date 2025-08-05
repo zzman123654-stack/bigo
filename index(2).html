@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>"Bingo"</title>
+  <title>Element Bingo</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,19 +35,6 @@
       background-color: #81c784 !important;
       color: white;
     }
-    button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: #1976d2;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-bottom: 10px;
-    }
-    button:hover {
-      background-color: #1565c0;
-    }
     #message {
       font-size: 20px;
       font-weight: bold;
@@ -60,7 +47,6 @@
 <body>
 
   <h1>Element Symbol Bingo</h1>
-  
   <div id="bingo"></div>
   <div id="message"></div>
 
@@ -100,11 +86,8 @@
       cell.dataset.col = col;
 
       cell.addEventListener("click", () => {
-        // สลับสถานะเลือก
         selectedCells[row][col] = !selectedCells[row][col];
         cell.classList.toggle("selected", selectedCells[row][col]);
-
-        console.log(`Clicked cell [${row},${col}] selected: ${selectedCells[row][col]}`);
 
         if (checkBingo()) {
           document.getElementById("message").textContent = "🎉 BINGO!";
@@ -144,9 +127,7 @@
     return false;
   }
 
-  document.getElementById("newGameBtn").addEventListener("click", generateBingo);
-
-  // เริ่มเกมครั้งแรก
+  // สุ่มตารางตอนโหลดหน้าเพจครั้งแรก
   generateBingo();
 </script>
 
