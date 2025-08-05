@@ -6,47 +6,78 @@
   <title>Element Bingo</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 20px;
+      background: linear-gradient(to bottom right, #fceabb, #f8b500);
+      margin: 0;
     }
+
     h1 {
-      margin-bottom: 10px;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     }
+
     #bingo {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 5px;
+      gap: 8px;
       max-width: 500px;
-      margin: 0 auto 20px;
+      margin: 0 auto;
     }
+
     .cell {
-      border: 1px solid #444;
-      padding: 20px;
-      font-size: 20px;
-      background-color: #e3f2fd;
-      border-radius: 6px;
+      border-radius: 10px;
+      padding: 24px;
+      font-size: 22px;
       font-weight: bold;
+      background-color: #ffffffcc;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
       user-select: none;
-      transition: background-color 0.3s;
     }
+
+    .cell:hover {
+      background-color: #d1c4e9;
+    }
+
     .selected {
-      background-color: #81c784 !important;
+      background-color: #66bb6a !important;
       color: white;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
     }
+
     #message {
-      font-size: 20px;
+      font-size: 2rem;
       font-weight: bold;
-      color: green;
-      margin-top: 10px;
-      min-height: 28px;
+      color: #ffffff;
+      margin-top: 20px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+      min-height: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .cell {
+        padding: 16px;
+        font-size: 18px;
+      }
+
+      #bingo {
+        max-width: 90%;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <h1> 🎉Bingo🎉 </h1>
+  <h1>🎉 Element Bingo 🎉</h1>
   <div id="bingo"></div>
   <div id="message"></div>
 
@@ -55,8 +86,9 @@
     "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
     "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
     "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
-    "Ga", "Ge", "As", "Se", "Br", "Kr","Rb","Sr","In","Sn","Sb","Te","I"
-    ,"I","Xe","Cs","Ba","Fr","Ra","Tl","Pb","Bi","Po","At","Rn"
+    "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "In", "Sn",
+    "Sb", "Te", "I", "Xe", "Cs", "Ba", "Fr", "Ra", "Tl", "Pb",
+    "Bi", "Po", "At", "Rn"
   ];
 
   let selectedCells = [];
@@ -72,7 +104,7 @@
     const container = document.getElementById("bingo");
     container.innerHTML = "";
     document.getElementById("message").textContent = "";
-    
+
     const shuffled = shuffleArray(elements).slice(0, 25);
     selectedCells = Array(5).fill(null).map(() => Array(5).fill(false));
 
@@ -102,33 +134,21 @@
   }
 
   function checkBingo() {
-    // ตรวจ row
+    // แถว
     for (let i = 0; i < 5; i++) {
       if (selectedCells[i].every(v => v)) return true;
     }
-
-    // ตรวจ column
+    // คอลัมน์
     for (let j = 0; j < 5; j++) {
-      let colFull = true;
-      for (let i = 0; i < 5; i++) {
-        if (!selectedCells[i][j]) {
-          colFull = false;
-          break;
-        }
-      }
-      if (colFull) return true;
+      if ([0,1,2,3,4].every(i => selectedCells[i][j])) return true;
     }
-
-    // ตรวจทแยงซ้ายบน-ขวาล่าง
+    // ทแยงมุม
     if ([0,1,2,3,4].every(i => selectedCells[i][i])) return true;
-
-    // ตรวจทแยงขวาบน-ซ้ายล่าง
     if ([0,1,2,3,4].every(i => selectedCells[i][4 - i])) return true;
 
     return false;
   }
 
-  // สุ่มตารางตอนโหลดหน้าเพจครั้งแรก
   generateBingo();
 </script>
 
