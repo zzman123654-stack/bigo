@@ -148,6 +148,13 @@
     if ([0, 1, 2, 3, 4].every(i => selectedCells[i][i])) return true;
     if ([0, 1, 2, 3, 4].every(i => selectedCells[i][4 - i])) return true;
 
+    if (checkBingo()) {
+  document.getElementById("message").textContent = "🎉 BINGO!";
+  document.getElementById("bingoSound").play();
+  alert("🎉 BINGO!");
+}
+
+
     return false;
   }
 
